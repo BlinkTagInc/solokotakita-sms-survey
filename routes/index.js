@@ -1,6 +1,7 @@
 var models = require('../models/models')
   , async = require('async')
-  , _ = require('underscore');
+  , _ = require('underscore')
+  , moment = require('moment');
 
 module.exports = function routes(app){
 
@@ -9,19 +10,35 @@ module.exports = function routes(app){
   /* Routes */
 
   app.get('/api/incoming', function(req, res){
-    if(!req.param('text')){
-      res.json({status: 'error', error: 'No text provided'});
-    } else if(!req.param('senderPhone')){
-      res.json({status: 'error', error: 'No senderPhone provided'});
+
+  /**
+   * Format specified 
+   * http://<Client domain name and script>?date=<DATETIME>&src=<SENDER_NUMBER>&dst=<DESTINATION_NUMBER>&enc=<ENCODING>&msg=<TEXT_MESSAGE>
+   */
+
+    if(!req.param('msg') || !req.param('src')){
+      var fail = '<?xml version="1.0" encoding="UTF-8" ?>\n' +
+        '<inboundAcknowledgment>\n' +
+        '<error>No source or message provided</error>\n' +
+        '</inboundAcknowledgment>';
+      res.send( fail, {'Content-Type':'text/xml'}, 200);
     } else {
       //Save SMS
       var sms = new Sms({
-          timestamp: req.param('timestamp') || Math.round(Date.now()/1000)
-        , text: req.param('text')
-        , senderPhone: req.param('senderPhone')
+          date: req.param('date') || moment().format('YYYY-MM-DD HH:mm:ss')
+        , src: req.param('src')
+        , dst: req.param('dst')
+        , enc: req.param('enc')
+        , msg: req.param('msg')
       });
       sms.save(function(e){
-        res.json(e ||{status: 'success'});
+        var success = '<?xml version="1.0" encoding="UTF-8" ?>\n' +
+          '<inboundAcknowledgment>\n' +
+          '<username>usernameapikita</username>\n' +
+          '<password>passwordapikita</password>\n' +
+          '<returnCode>1</returnCode>\n' +
+          '</inboundAcknowledgment>';
+        res.send( success, {'Content-Type':'text/xml'}, 200);
       });
     }
   });
