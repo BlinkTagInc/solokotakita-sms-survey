@@ -34,8 +34,8 @@ module.exports = function routes(app){
       sms.save(function(e){
         var success = '<?xml version="1.0" encoding="UTF-8" ?>\n' +
           '<inboundAcknowledgment>\n' +
-          '<username>usernameapikita</username>\n' +
-          '<password>passwordapikita</password>\n' +
+          '<username>solokota</username>\n' +
+          '<password>S0l0K0t4</password>\n' +
           '<returnCode>1</returnCode>\n' +
           '</inboundAcknowledgment>';
         res.send( success, {'Content-Type':'text/xml'}, 200);
