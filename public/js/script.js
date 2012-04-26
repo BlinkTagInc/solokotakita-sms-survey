@@ -9,5 +9,11 @@ window.log = function f(){ log.history = log.history || []; log.history.push(arg
 
 
 $(document).ready(function(){
-
+  //show all message logs
+  $.getJSON('/api/logs', function(data){
+    data.forEach(function(sms){
+      $('<div>').html(JSON.stringify(sms)).appendTo('#logs');
+    });
+    console.log(data);
+  });
 });

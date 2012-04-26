@@ -5,7 +5,7 @@ var models = require('../models/models')
 
 module.exports = function routes(app){
 
-  var Sms = app.set('db').model('Sms');
+  var Sms = app.set('db').model('sms');
 
   /* Routes */
 
@@ -41,6 +41,13 @@ module.exports = function routes(app){
         res.send( success, {'Content-Type':'text/xml'}, 200);
       });
     }
+  });
+
+  app.get('/api/logs', function(req, res){
+    Sms.find({}, function(e, results){
+      console.log(results);
+      res.json(results);
+    });
   });
 
   //Nothing specified

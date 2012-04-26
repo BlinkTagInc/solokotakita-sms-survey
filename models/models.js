@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var Sms = mongoose.model('Sms', new mongoose.Schema({
+var Sms = mongoose.model('sms', new mongoose.Schema({
       date               :  { type: String, index: true }
     , src                :  { type: String }
     , dst                :  { type: String }
