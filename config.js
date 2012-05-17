@@ -1,13 +1,16 @@
 var express = require('express')
   , mongoose = require('mongoose')
   , mongoURI = process.env['MONGO_URI'] || 'mongodb://localhost/sms'
-  , db = mongoose.connect(mongoURI);
+  , db = mongoose.connect(mongoURI)
+  , jadevu = require('jadevu');
 
 
 module.exports = function(app){
   app.configure(function(){
     this.use(express.cookieParser())
         .use(express.bodyParser())
+        .set('views', __dirname + '/views')
+        .set('view engine', 'jade')
         .set('public', __dirname + '/public')
         .enable('jsonp callback')
         .enable('error templates')

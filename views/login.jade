@@ -1,0 +1,10 @@
+h2 Login to Solo Kota Kita
+form#login.well(action="/sessions/create", method="POST")
+  .control-group
+    if (error)
+      div.error= error
+    div
+      input(type="text", placeholder="username", name="username")
+    div
+      input(type="password", placeholder="password", name="password")
+  input(type="submit", value="Login")

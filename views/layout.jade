@@ -1,0 +1,24 @@
+!!! 5
+html
+  head
+    link(rel='shortcut icon', href:'/favicon.ico')
+    title= typeof(title) !== 'undefined' ? title : 'Solo Kota Kita SMS'
+    script(src='/js/libs/modernizr-2.0.6.min.js')
+    link(rel='stylesheet', href='/css/style.css')
+    link(rel='stylesheet', href='/css/bootstrap.min.css')
+  body
+    .navbar
+      .navbar-inner
+        .container
+          a.brand(href="/") Solo Kota Kita SMS
+          .nav-collapse
+            ul#top-menu.nav
+    #content!= body
+    
+    script(src='/js/jquery/1.7.1/jquery.min.js')
+    script(src='/js/script.js')
+    
+    //if lt IE 7
+      script(defer, src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js")
+      script.
+        window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})

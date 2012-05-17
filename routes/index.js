@@ -1,13 +1,62 @@
 var models = require('../models/models')
   , async = require('async')
   , _ = require('underscore')
-  , moment = require('moment');
+  , moment = require('moment')
+  , bcrypt = require('bcrypt');
+
+function isAuthenticated(req, res, next){
+  if(req.isAuthenticated){
+    next();
+  }else{
+    res.redirect('/login');
+  }
+}
 
 module.exports = function routes(app){
 
   var Sms = app.set('db').model('sms');
+  var User = app.set('db').model('user');
 
   /* Routes */
+
+  app.get('/', isAuthenticated, function(req, res){
+    res.render('index')
+  });
+
+  app.get('/login', function(req, res){
+    res.render('login', { title: 'Solo Kota Kita | Login' });
+  });
+
+  app.post('/sessions/create', function(req, res){
+    console.log(req.body.username);
+    console.log(req.body.password);
+  });
+
+  app.get('/signup', function(req, res){
+    res.render('signup', { title: 'Solo Kota Kita | Create New User' });
+  });
+
+  app.post('/users/create', function(req, res){
+    if(req.body.username && req.body.password){
+      if(req.body.password == req.body.passwordAgain){
+        var user = new User({
+            username: req.body.username
+          , password: req.body.password
+        });
+        user.save(function(e){
+          if(e){
+            res.render('signup', { title: 'Solo Kota Kita | Create New User', error: e});
+          } else {
+            res.redirect('/login');
+          }
+        });
+      } else {
+        res.render('signup', { title: 'Solo Kota Kita | Create New User', error: 'Mismatched Passwords' });
+      }
+    } else {
+      res.render('signup', { title: 'Solo Kota Kita | Create New User', error: 'Missing Username or Password' });
+    }
+  });
 
   app.get('/api/incoming', function(req, res){
 
@@ -43,7 +92,7 @@ module.exports = function routes(app){
     }
   });
 
-  app.get('/api/logs', function(req, res){
+  app.get('/api/logs', isAuthenticated, function(req, res){
     Sms.find({}, function(e, results){
       console.log(results);
       res.json(results);

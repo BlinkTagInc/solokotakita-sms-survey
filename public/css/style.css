@@ -1,0 +1,17 @@
+#content{
+  width:1024px;
+  margin: 0 auto;
+}
+
+#login{
+  margin: 20px;
+  width: 220px;
+}
+
+#login input[type="submit"]{
+  float: right;
+}
+
+.error{
+  color:#b94a48;
+}
