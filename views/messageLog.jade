@@ -1,0 +1,14 @@
+h2 Message log
+table.messages.table.table-striped
+  thead
+    tr
+      th.msg Message
+      th.date Timestamp
+      th.src Sender
+  tbody
+    each sms in results
+      tr.message
+        td.msg= sms.msg
+        td.date= sms.date
+        td.src= sms.src
+

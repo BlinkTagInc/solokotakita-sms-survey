@@ -25,6 +25,12 @@ module.exports = function routes(app){
     res.render('index')
   });
 
+  app.get('/messageLog', isAuthenticated, function(req, res){
+    Sms.find({}, function(e, results){
+      res.render('messageLog', {results: results});
+    });
+  });
+
   app.get('/login', function(req, res){
     res.render('login', { title: 'Solo Kota Kita | Login' });
   });
