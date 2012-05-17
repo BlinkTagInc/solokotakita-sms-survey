@@ -2,10 +2,12 @@ var models = require('../models/models')
   , async = require('async')
   , _ = require('underscore')
   , moment = require('moment')
-  , bcrypt = require('bcrypt');
+  , bcrypt = require('bcrypt')
+  , salt = bcrypt.genSaltSync(10);
 
 function isAuthenticated(req, res, next){
-  if(req.isAuthenticated){
+  console.log(req.session);
+  if(req.session.isAuthenticated){
     next();
   }else{
     res.redirect('/login');
@@ -28,20 +30,35 @@ module.exports = function routes(app){
   });
 
   app.post('/sessions/create', function(req, res){
-    console.log(req.body.username);
-    console.log(req.body.password);
+    User.findOne({username: req.body.username}, function(e, result){
+      if(result && bcrypt.compareSync(req.body.password, result.password)){
+        req.session.user = {
+          username: result.username
+        }
+        req.session.isAuthenticated = true;
+        res.redirect('/');
+      } else {
+        res.render('login', { title: 'Solo Kota Kita | Login', error: 'Login Error' });
+      }
+    });
   });
 
-  app.get('/signup', function(req, res){
+  app.get('/logout', function(req, res){
+    req.session.destroy(function(e){
+      res.redirect('/login');
+    });
+  });
+
+  app.get('/signup', isAuthenticated, function(req, res){
     res.render('signup', { title: 'Solo Kota Kita | Create New User' });
   });
 
-  app.post('/users/create', function(req, res){
+  app.post('/users/create', isAuthenticated, function(req, res){
     if(req.body.username && req.body.password){
       if(req.body.password == req.body.passwordAgain){
         var user = new User({
             username: req.body.username
-          , password: req.body.password
+          , password: bcrypt.hashSync( req.body.password, salt )
         });
         user.save(function(e){
           if(e){
@@ -101,7 +118,7 @@ module.exports = function routes(app){
 
   //Nothing specified
   app.all('*', function notFound(req, res) {
-    res.send('node');
+    res.send('Not Found');
   });
 
 }

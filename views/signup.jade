@@ -1,7 +1,7 @@
-h2 Create New User for Solo Kota Kita
 form#signup.well(action="/users/create", method="POST")
   .control-group
-    if (error)
+    h2 Create New User for Solo Kota Kita
+    - if (typeof(error) != 'undefined')
       div.error= error
     div
       input(type="text", placeholder="username", name="username")
@@ -9,4 +9,4 @@ form#signup.well(action="/users/create", method="POST")
       input(type="password", placeholder="password", name="password")
     div
       input(type="password", placeholder="password again", name="passwordAgain")
-  input.btn(type="submit", value="Add User")
+  input.btn.btn-primary(type="submit", value="Add User")

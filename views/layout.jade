@@ -3,7 +3,6 @@ html
   head
     link(rel='shortcut icon', href:'/favicon.ico')
     title= typeof(title) !== 'undefined' ? title : 'Solo Kota Kita SMS'
-    script(src='/js/libs/modernizr-2.0.6.min.js')
     link(rel='stylesheet', href='/css/style.css')
     link(rel='stylesheet', href='/css/bootstrap.min.css')
   body
@@ -13,6 +12,10 @@ html
           a.brand(href="/") Solo Kota Kita SMS
           .nav-collapse
             ul#top-menu.nav
+              li
+                a(href="/messageLog") Message Log
+              li
+                a(href="/logout") Logout
     #content!= body
     
     script(src='/js/jquery/1.7.1/jquery.min.js')

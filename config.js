@@ -9,6 +9,7 @@ module.exports = function(app){
   app.configure(function(){
     this.use(express.cookieParser())
         .use(express.bodyParser())
+        .use(express.session({ secret: "pwn noobs"}))
         .set('views', __dirname + '/views')
         .set('view engine', 'jade')
         .set('public', __dirname + '/public')
