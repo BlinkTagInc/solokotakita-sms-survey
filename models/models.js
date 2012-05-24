@@ -6,7 +6,17 @@ var Sms = mongoose.model('sms', new mongoose.Schema({
     , dst                :  { type: String }
     , enc                :  { type: String }
     , msg                :  { type: String }
-  }, {strict:true}));
+  }, {strict: true}));
+
+var Question = new mongoose.Schema({
+      number             :  { type: String }
+    , answer             :  { type: String }
+  }, {strict: true});
+
+var Survey = mongoose.model('survey', new mongoose.Schema({
+      src                :  { type: String, unique: true, trim: true }
+    , answers            :  [Question]
+  }, {strict: true}));
 
 var User = mongoose.model('user', new mongoose.Schema({
       username           :  { type: String, required: true, unique: true, trim: true }

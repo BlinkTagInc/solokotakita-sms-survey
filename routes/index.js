@@ -3,10 +3,11 @@ var models = require('../models/models')
   , _ = require('underscore')
   , moment = require('moment')
   , bcrypt = require('bcrypt')
-  , salt = bcrypt.genSaltSync(10);
+  , salt = bcrypt.genSaltSync(10)
+  , smsUtils = require('../lib/sms')
+  , survey = require('../lib/survey');
 
 function isAuthenticated(req, res, next){
-  console.log(req.session);
   if(req.session.isAuthenticated){
     next();
   }else{
@@ -96,30 +97,18 @@ module.exports = function routes(app){
       res.send( fail, {'Content-Type':'text/xml'}, 200);
     } else {
       //Save SMS
-      var sms = new Sms({
-          date: req.param('date') || moment().format('YYYY-MM-DD HH:mm:ss')
-        , src: req.param('src')
-        , dst: req.param('dst')
-        , enc: req.param('enc')
-        , msg: req.param('msg')
-      });
-      sms.save(function(e){
-        var success = '<?xml version="1.0" encoding="UTF-8" ?>\n' +
-          '<inboundAcknowledgment>\n' +
-          '<username>solokota</username>\n' +
-          '<password>S0l0K0t4</password>\n' +
-          '<returnCode>1</returnCode>\n' +
-          '</inboundAcknowledgment>';
-        res.send( success, {'Content-Type':'text/xml'}, 200);
-      });
-    }
-  });
+      smsUtils.saveMessage(Sms, req.param('date'), req.param('src'), req.param('dst'), req.param('enc'), req.param('msg'));
 
-  app.get('/api/logs', isAuthenticated, function(req, res){
-    Sms.find({}, function(e, results){
-      console.log(results);
-      res.json(results);
-    });
+      survey.doSurvey(app, req);
+      
+      var success = '<?xml version="1.0" encoding="UTF-8" ?>\n' +
+        '<inboundAcknowledgment>\n' +
+        '<username>solokota</username>\n' +
+        '<password>S0l0K0t4</password>\n' +
+        '<returnCode>1</returnCode>\n' +
+        '</inboundAcknowledgment>';
+      res.send( success, {'Content-Type':'text/xml'}, 200);
+    }
   });
 
   //Nothing specified
