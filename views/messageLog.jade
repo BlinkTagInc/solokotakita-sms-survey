@@ -1,4 +1,6 @@
 h2 Message log
+.topNavigation Page #{page} of #{pages}
+
 table.messages.table.table-striped
   thead
     tr
@@ -11,4 +13,9 @@ table.messages.table.table-striped
         td.msg= sms.msg
         td.date= sms.date
         td.src= sms.src
-
+.navigation
+  - for (var i = 1; i <= pages; i++)
+    if(i == page)
+      a(href='/messageLog/' + i, class='current')= i
+    else
+      a(href='/messageLog/' + i)= i

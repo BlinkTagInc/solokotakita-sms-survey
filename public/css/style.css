@@ -1,8 +1,23 @@
-#content{
+#content {
   width: 940px;
   margin: 0 auto;
 }
 
-.error{
+.error {
   color: #b94a48;
+}
+
+.navigation {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.navigation a {
+  padding: 0 4px;
+  font-size: 14px;
+}
+
+.navigation a.current {
+  color: #000;
+  font-weight: bold;
 }

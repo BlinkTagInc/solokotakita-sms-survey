@@ -1,0 +1,22 @@
+h2 Results
+
+a(href='/downloads/results.csv') Export as .csv file
+
+table.results.table.table-striped
+  thead
+    tr
+      th.number Number
+      th Q1
+      th Q2
+      th Q3
+      th Q4
+      th Q5
+      th Q6
+
+  tbody
+    each result in results
+      tr.result
+        td.number= result.src
+        each answer in result.answers
+          td= answer.answer
+

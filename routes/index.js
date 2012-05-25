@@ -17,8 +17,10 @@ function isAuthenticated(req, res, next){
 
 module.exports = function routes(app){
 
-  var Sms = app.set('db').model('sms');
-  var User = app.set('db').model('user');
+  var Sms = app.set('db').model('sms')
+    , User = app.set('db').model('user')
+    , Survey = app.set('db').model('survey');
+
 
   /* Routes */
 
@@ -26,11 +28,31 @@ module.exports = function routes(app){
     res.render('index')
   });
 
-  app.get('/messageLog', isAuthenticated, function(req, res){
-    Sms.find({}, function(e, results){
-      res.render('messageLog', {results: results});
+  app.get('/messageLog', isAuthenticated, getMessageLog);
+  app.get('/messageLog/:page', isAuthenticated, getMessageLog);
+
+  function getMessageLog(req, res){
+    var resultsPerPage = 100
+      , page = (parseInt(req.params.page, 10)) ? req.params.page : 1;
+    Sms
+      .find()
+      .limit(resultsPerPage)
+      .skip((page - 1) * resultsPerPage)
+      .run(function(e, results){
+        Sms.count(function(e, count){
+          res.render('messageLog', {results: results, page: page, pages: Math.ceil(count / resultsPerPage), resultsPerPage: resultsPerPage});
+        });
+      });
+  };
+
+  app.get('/results', isAuthenticated, function(req, res){
+    Survey.find(function(e, results){
+      console.log(results);
+      res.render('results', {results: results});
     });
+
   });
+
 
   app.get('/login', function(req, res){
     res.render('login', { title: 'Solo Kota Kita | Login' });
@@ -82,6 +104,23 @@ module.exports = function routes(app){
     }
   });
 
+  app.get('/downloads/results.csv', isAuthenticated, function(req, res){
+    var csv = '';
+    Survey.find(function(e, results){
+      res.writeHead(200, {'Content-Type':'text/csv'});
+      results.forEach(function(result){
+        var line = [];
+        line.push(result.src)
+        result.answers.forEach(function(answer){
+          line.push(answer.answer);
+        });
+        csv += line.join(',') + "\n";
+      });
+      res.write(csv);
+      res.end();
+    });
+  });
+
   app.get('/api/incoming', function(req, res){
 
   /**
@@ -109,6 +148,12 @@ module.exports = function routes(app){
         '</inboundAcknowledgment>';
       res.send( success, {'Content-Type':'text/xml'}, 200);
     }
+  });
+
+  app.get('/api/results', isAuthenticated, function(req, res){
+    Survey.find(function(e, results){
+      res.json(results);
+    });
   });
 
   //Nothing specified
