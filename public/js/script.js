@@ -7,13 +7,85 @@ window.log = function f(){ log.history = log.history || []; log.history.push(arg
 (function(){try{console.log();return window.console;}catch(a){return (window.console={});}}());
 
 
+function getTimestamp(){
+  var now = new Date();
+  var timestamp = now.getFullYear() + '-' +
+                  ('0' + (now.getMonth()+1)).slice(-2) + '-' +
+                  ('0' + now.getDate()).slice(-2) + ' ' +
+                  ('0' + now.getHours()).slice(-2) + ':' +
+                  ('0' + now.getMinutes()).slice(-2) + ':' +
+                  ('0' + now.getSeconds()).slice(-2);
+  return timestamp;
+}
+
+function getNextQuestion(src){
+  $.getJSON('/api/nextQuestion'
+          , {src: src}
+          , function(question){
+            console.log(question);
+            if(question.number <= question.count){
+              $('<div>')
+                .addClass('question')
+                .html('Q' + question.number + ': ' + question.question)
+                .appendTo('#questions');
+            } else {
+              $('<div>')
+                .addClass('alert alert-success')
+                .html(question.question)
+                .appendTo('#questions');
+              $('#answers').hide();
+            }
+          });
+}
+
 
 $(document).ready(function(){
-  //show all message logs
-  $.getJSON('/api/logs', function(data){
-    data.forEach(function(sms){
-      $('<div>').html(JSON.stringify(sms)).appendTo('#logs');
+
+  $('#tester').submit(function(){
+    $('#tester input[type="submit"]').hide();
+    $('#tester input').attr('disabled', 'disabled');
+    $('#answers').show();
+    $.ajax({
+        url: '/api/incoming'
+      , dataType: 'xml'
+      , data: {
+                  src: $('#tester .src').val()
+                , dst: '6289676076213'
+                , date: getTimestamp()
+                , msg: 'start'
+                , test: true
+              }
+      , success: function(data){ getNextQuestion($('#tester .src').val()); }
     });
-    console.log(data);
+    return false;
   });
+
+  $('#answers').submit(function(){
+    var answer = $('#answers .answer').val();
+    $('#answers .answer').val('');
+
+    $('<div>')
+      .addClass('answer')
+      .html('A: ' + answer)
+      .appendTo('#questions');
+
+    $.ajax({
+        url: '/api/incoming'
+      , dataType: 'xml'
+      , data: {
+                  src: $('#tester .src').val()
+                , dst: '6289676076213'
+                , date: getTimestamp()
+                , msg: answer
+                , test: true
+              }
+      , success: function(data){
+                  getNextQuestion($('#tester .src').val()); 
+                 }
+    });
+    return false;
+  });
+
+
+
 });

@@ -21,3 +21,20 @@
   color: #000;
   font-weight: bold;
 }
+
+#questions {
+  margin-bottom: 10px;
+}
+
+#questions .question {
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+#answers {
+  display: none;
+}
+
+#answers input[type="submit"] {
+  margin-left: 5px;
+}

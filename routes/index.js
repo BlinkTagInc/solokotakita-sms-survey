@@ -50,8 +50,12 @@ module.exports = function routes(app){
       console.log(results);
       res.render('results', {results: results});
     });
-
   });
+
+  app.get('/tester', isAuthenticated, function(req, res){
+    res.render('tester');
+  });
+
 
 
   app.get('/login', function(req, res){
@@ -148,6 +152,10 @@ module.exports = function routes(app){
         '</inboundAcknowledgment>';
       res.send( success, {'Content-Type':'text/xml'}, 200);
     }
+  });
+
+  app.get('/api/nextQuestion', isAuthenticated, function(req, res){
+    survey.doTestSurvey(app, req, res);
   });
 
   app.get('/api/results', isAuthenticated, function(req, res){

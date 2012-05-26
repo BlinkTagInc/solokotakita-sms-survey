@@ -1,0 +1,14 @@
+h2 Survey Tester
+
+.well
+  form#tester.form-horizontal
+    .control-group
+      label.control-label Sender Phone Number
+      .controls
+        input.input-xlarge.src(name="src")
+    input.btn(type="submit", value="Start Survey")
+  #questions
+  form#answers.form-horizontal
+    .control-group
+      input.answer.input-small(name="answer")
+      input.btn(type="submit", value="Submit Answer")
