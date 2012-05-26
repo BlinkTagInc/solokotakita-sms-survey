@@ -82,29 +82,33 @@ module.exports = function routes(app){
     });
   });
 
-  app.get('/signup', isAuthenticated, function(req, res){
+  app.get('/signup', function(req, res){
     res.render('signup', { title: 'Solo Kota Kita | Create New User' });
   });
 
-  app.post('/users/create', isAuthenticated, function(req, res){
-    if(req.body.username && req.body.password){
-      if(req.body.password == req.body.passwordAgain){
-        var user = new User({
-            username: req.body.username
-          , password: bcrypt.hashSync( req.body.password, salt )
-        });
-        user.save(function(e){
-          if(e){
-            res.render('signup', { title: 'Solo Kota Kita | Create New User', error: e});
-          } else {
-            res.redirect('/login');
-          }
-        });
+  app.post('/users/create', function(req, res){
+    if(process.env.ALLOW_SIGNUP == 'true' || req.session.isAuthenticated) {
+      if(req.body.username && req.body.password){
+        if(req.body.password == req.body.passwordAgain){
+          var user = new User({
+              username: req.body.username
+            , password: bcrypt.hashSync( req.body.password, salt )
+          });
+          user.save(function(e){
+            if(e){
+              res.render('signup', { title: 'Solo Kota Kita | Create New User', error: e});
+            } else {
+              res.redirect('/login');
+            }
+          });
+        } else {
+          res.render('signup', { title: 'Solo Kota Kita | Create New User', error: 'Mismatched Passwords' });
+        }
       } else {
-        res.render('signup', { title: 'Solo Kota Kita | Create New User', error: 'Mismatched Passwords' });
+        res.render('signup', { title: 'Solo Kota Kita | Create New User', error: 'Missing Username or Password' });
       }
     } else {
-      res.render('signup', { title: 'Solo Kota Kita | Create New User', error: 'Missing Username or Password' });
+      res.render('signup', { title: 'Solo Kota Kita | Create New User', error: 'Signup not allowed' });
     }
   });
 
