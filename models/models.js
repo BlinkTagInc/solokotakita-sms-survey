@@ -15,6 +15,7 @@ var Question = new mongoose.Schema({
 
 var Survey = mongoose.model('survey', new mongoose.Schema({
       src                :  { type: String, unique: true, trim: true }
+    , neighborhood       :  { type: String, trim: true }
     , answers            :  [Question]
   }, {strict: true}));
 
