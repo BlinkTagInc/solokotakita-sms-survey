@@ -38,3 +38,7 @@
 #answers input[type="submit"] {
   margin-left: 5px;
 }
+
+h2 {
+  text-transform: capitalize;
+}

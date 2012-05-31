@@ -1,22 +1,28 @@
-h2 Results
+if neighborhood
+  h2=neighborhood + " Results"
+else
+  h2 Results
 
-a(href='/downloads/results.csv') Export as .csv file
+form#neighborhoodSelect
+  select
+    option Select a Neighborhood
+    each neighborhood in neighborhoods
+      option(value=neighborhood)=neighborhood
 
-table.results.table.table-striped
-  thead
-    tr
-      th.number Number
-      th Q1
-      th Q2
-      th Q3
-      th Q4
-      th Q5
-      th Q6
+if results
+  a(href='/downloads/results.csv') Export as .csv file
 
-  tbody
-    each result in results
-      tr.result
-        td.number= result.src
-        each answer in result.answers
-          td= answer.answer
+  table.results.table.table-striped
+    thead
+      tr
+        th.number Number
+        each answer, i in results[0].answers
+          th= "Q" + (i + 1)
+
+    tbody
+      each result in results
+        tr.result
+          td.number= result.src
+          each answer in result.answers
+            td= answer.answer
 

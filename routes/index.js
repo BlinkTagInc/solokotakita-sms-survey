@@ -5,7 +5,8 @@ var models = require('../models/models')
   , bcrypt = require('bcrypt')
   , salt = bcrypt.genSaltSync(10)
   , smsUtils = require('../lib/sms')
-  , survey = require('../lib/survey');
+  , survey = require('../lib/survey')
+  , questions = require('../lib/questions');
 
 function isAuthenticated(req, res, next){
   if(req.session.isAuthenticated){
@@ -46,11 +47,16 @@ module.exports = function routes(app){
   };
 
   app.get('/results', isAuthenticated, function(req, res){
-    Survey.find(function(e, results){
+    res.render('results', {results: null, neighborhoods: questions.neighborhoods, neighborhood: null});
+  });
+
+  app.get('/results/:neighborhood', isAuthenticated, function(req, res){
+    Survey.find({neighborhood: req.params.neighborhood}, function(e, results){
       console.log(results);
-      res.render('results', {results: results});
+      res.render('results', {results: results, neighborhoods: questions.neighborhoods, neighborhood: req.params.neighborhood});
     });
   });
+
 
   app.get('/tester', isAuthenticated, function(req, res){
     res.render('tester');
@@ -127,6 +133,10 @@ module.exports = function routes(app){
       res.write(csv);
       res.end();
     });
+  });
+
+  app.get('/api/questions', isAuthenticated, function(req, res){
+    res.json(questions);
   });
 
   app.get('/api/incoming', function(req, res){

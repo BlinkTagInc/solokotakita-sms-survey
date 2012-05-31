@@ -86,6 +86,15 @@ $(document).ready(function(){
     return false;
   });
 
+  /* Results Page */
+  $('#neighborhoodSelect select').on('change', function(){
+    $(this).parent().submit();
+  });
+
+  $('#neighborhoodSelect').submit(function(){
+    window.location = '/results/' + $('#neighborhoodSelect select:first-child option:selected').val();
+    return false;
+  });
 
 
 });
