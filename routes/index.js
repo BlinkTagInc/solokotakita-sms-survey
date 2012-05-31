@@ -63,7 +63,6 @@ module.exports = function routes(app){
   });
 
 
-
   app.get('/login', function(req, res){
     res.render('login', { title: 'Solo Kota Kita | Login' });
   });
@@ -118,10 +117,14 @@ module.exports = function routes(app){
     }
   });
 
-  app.get('/downloads/results.csv', isAuthenticated, function(req, res){
-    var csv = '';
-    Survey.find(function(e, results){
+  app.get('/downloads/:neighborhood/results.csv', isAuthenticated, function(req, res){
+    Survey.find({neighborhood: req.params.neighborhood}, function(e, results){
       res.writeHead(200, {'Content-Type':'text/csv'});
+      var csv = 'Number';
+      results[0].answers.forEach(function(answer, i){
+        csv += ",Q" + (i+1);
+      });
+      csv += "\n";
       results.forEach(function(result){
         var line = [];
         line.push(result.src)

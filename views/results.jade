@@ -10,7 +10,7 @@ form#neighborhoodSelect
       option(value=neighborhood)=neighborhood
 
 if results
-  a(href='/downloads/results.csv') Export as .csv file
+  a(href='/downloads/' + neighborhood + '/results.csv') Export as .csv file
 
   table.results.table.table-striped
     thead
