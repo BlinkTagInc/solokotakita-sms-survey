@@ -156,20 +156,8 @@ module.exports = function routes(app){
       //Save SMS
       smsUtils.saveMessage(Sms, req.param('date'), req.param('src'), req.param('dst'), req.param('enc'), req.param('msg'));
 
-      survey.doSurvey(app, req);
-      
-      var success = '<?xml version="1.0" encoding="UTF-8" ?>\n' +
-        '<inboundAcknowledgment>\n' +
-        '<username>solokota</username>\n' +
-        '<password>S0l0K0t4</password>\n' +
-        '<returnCode>1</returnCode>\n' +
-        '</inboundAcknowledgment>';
-      res.send( success, {'Content-Type':'text/xml'}, 200);
+      survey.doSurvey(app, req, res);
     }
-  });
-
-  app.get('/api/nextQuestion', isAuthenticated, function(req, res){
-    survey.doTestSurvey(app, req, res);
   });
 
   app.get('/api/results', isAuthenticated, function(req, res){

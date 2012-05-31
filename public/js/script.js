@@ -18,22 +18,37 @@ function getTimestamp(){
   return timestamp;
 }
 
-function getNextQuestion(src){
-  $.getJSON('/api/nextQuestion'
-          , {src: src}
-          , function(question){
-            console.log(question);
-            if(question.number <= question.count){
-              $('<div>')
-                .addClass('question')
-                .html('Q' + question.number + ': ' + question.question)
-                .appendTo('#questions');
-            } else {
-              $('<div>')
-                .addClass('alert alert-success')
-                .html(question.question)
-                .appendTo('#questions');
-              $('#answers').hide();
+function getNextQuestion(src, msg){
+  $.getJSON('/api/incoming'
+          , {
+                src: src
+              , dst: '6289676076213'
+              , enc: '0'
+              , test: 'true'
+              , msg: msg
+            }
+          , function(data){
+            console.log(data);
+            switch(data.status) {
+              case 'start':
+                $('<div>')
+                  .addClass('question')
+                  .html(data.question)
+                  .appendTo('#questions');
+                break;
+              case 'end':
+                $('<div>')
+                  .addClass('alert alert-success')
+                  .html(data.question)
+                  .appendTo('#questions');
+                $('#answers').hide();
+                break;
+              default:
+                $('<div>')
+                  .addClass('question')
+                  .html('Q' + data.status + ': ' + data.question)
+                  .appendTo('#questions');
+                break;
             }
           });
 }
@@ -41,22 +56,12 @@ function getNextQuestion(src){
 
 $(document).ready(function(){
 
+  /* Test Survey Page */
   $('#tester').submit(function(){
     $('#tester input[type="submit"]').hide();
     $('#tester input').attr('disabled', 'disabled');
     $('#answers').show();
-    $.ajax({
-        url: '/api/incoming'
-      , dataType: 'xml'
-      , data: {
-                  src: $('#tester .src').val()
-                , dst: '6289676076213'
-                , date: getTimestamp()
-                , msg: 'start'
-                , test: true
-              }
-      , success: function(data){ getNextQuestion($('#tester .src').val()); }
-    });
+    getNextQuestion($('#tester .src').val(), 'start');
     return false;
   });
 
@@ -68,23 +73,10 @@ $(document).ready(function(){
       .addClass('answer')
       .html('A: ' + answer)
       .appendTo('#questions');
-
-    $.ajax({
-        url: '/api/incoming'
-      , dataType: 'xml'
-      , data: {
-                  src: $('#tester .src').val()
-                , dst: '6289676076213'
-                , date: getTimestamp()
-                , msg: answer
-                , test: true
-              }
-      , success: function(data){
-                  getNextQuestion($('#tester .src').val()); 
-                 }
-    });
+    getNextQuestion($('#tester .src').val(), answer);
     return false;
   });
+
 
   /* Results Page */
   $('#neighborhoodSelect select').on('change', function(){
