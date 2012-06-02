@@ -52,10 +52,13 @@ module.exports = function routes(app){
   });
 
   app.get('/results/:neighborhood', isAuthenticated, function(req, res){
-    Survey.find({neighborhood: req.params.neighborhood}, function(e, results){
-      console.log(results);
-      res.render('results', {results: results, neighborhoods: questions.neighborhoods, neighborhood: req.params.neighborhood});
-    });
+    Survey
+      .find({neighborhood: req.params.neighborhood})
+      .sort('$natural', -1)
+      .run(function(e, results){
+        console.log(results);
+        res.render('results', {results: results, neighborhoods: questions.neighborhoods, neighborhood: req.params.neighborhood});
+      });
   });
 
 
