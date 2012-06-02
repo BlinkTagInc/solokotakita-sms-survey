@@ -37,6 +37,7 @@ module.exports = function routes(app){
       , page = (parseInt(req.params.page, 10)) ? req.params.page : 1;
     Sms
       .find()
+      .sort('$natural', -1)
       .limit(resultsPerPage)
       .skip((page - 1) * resultsPerPage)
       .run(function(e, results){
