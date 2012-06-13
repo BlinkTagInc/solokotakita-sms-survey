@@ -1,5 +1,11 @@
 h2 Message log
 .topNavigation Page #{page} of #{pages}
+.navigation
+  - for (var i = 1; i <= pages; i++)
+    if(i == page)
+      a(href='/messageLog/' + i, class='current')= i
+    else
+      a(href='/messageLog/' + i)= i
 
 table.messages.table.table-striped
   thead

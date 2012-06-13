@@ -9,7 +9,7 @@ form#neighborhoodSelect
     each neighborhood in neighborhoods
       option(value=neighborhood)=neighborhood
 
-if results
+if results && results.length
   a(href='/downloads/' + neighborhood + '/results.csv') Export as .csv file
 
   table.results.table.table-striped
