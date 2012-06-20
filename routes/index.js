@@ -56,7 +56,6 @@ module.exports = function routes(app){
       .find({neighborhood: req.params.neighborhood})
       .sort('$natural', -1)
       .run(function(e, results){
-        console.log(results);
         res.render('results', {results: results, neighborhoods: questions.neighborhoods, neighborhood: req.params.neighborhood});
       });
   });
