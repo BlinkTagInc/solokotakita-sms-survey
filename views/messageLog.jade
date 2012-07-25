@@ -13,6 +13,7 @@ table.messages.table.table-striped
       th.direction Direction
       th.msg Message
       th.src Sender
+      th.dst Recipient
       th.date Timestamp
   tbody
     each sms in results
@@ -20,6 +21,7 @@ table.messages.table.table-striped
         td.direction= sms.direction
         td.msg= sms.msg
         td.src= sms.src
+        td.dst= sms.dst
         td.date= sms.timestamp
 .navigation
   - for (var i = 1; i <= pages; i++)
