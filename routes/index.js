@@ -48,15 +48,11 @@ module.exports = function routes(app){
   };
 
   app.get('/results', isAuthenticated, function(req, res){
-    res.render('results', {results: null, neighborhoods: questions.neighborhoods, neighborhood: null});
-  });
-
-  app.get('/results/:neighborhood', isAuthenticated, function(req, res){
     Survey
-      .find({neighborhood: req.params.neighborhood})
+      .find()
       .sort('$natural', -1)
       .run(function(e, results){
-        res.render('results', {results: results, neighborhoods: questions.neighborhoods, neighborhood: req.params.neighborhood});
+        res.render('results', {results: results});
       });
   });
 
@@ -120,8 +116,8 @@ module.exports = function routes(app){
     }
   });
 
-  app.get('/downloads/:neighborhood/results.csv', isAuthenticated, function(req, res){
-    Survey.find({neighborhood: req.params.neighborhood}, function(e, results){
+  app.get('/downloads/results.csv', isAuthenticated, function(req, res){
+    Survey.find(function(e, results){
       res.writeHead(200, {'Content-Type':'text/csv'});
       var csv = 'Number';
       results[0].answers.forEach(function(answer, i){

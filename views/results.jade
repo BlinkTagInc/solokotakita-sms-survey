@@ -1,16 +1,7 @@
-if neighborhood
-  h2=neighborhood + " Results"
-else
-  h2 Results
-
-form#neighborhoodSelect
-  select
-    option Select a Neighborhood
-    each neighborhood in neighborhoods
-      option(value=neighborhood)=neighborhood
+h2 Results
 
 if results && results.length
-  a(href='/downloads/' + neighborhood + '/results.csv') Export as .csv file
+  a(href='/downloads/results.csv') Export as .csv file
 
   table.results.table.table-striped
     thead
