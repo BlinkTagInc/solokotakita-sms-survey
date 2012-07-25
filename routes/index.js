@@ -52,7 +52,7 @@ module.exports = function routes(app){
       .find()
       .sort('$natural', -1)
       .run(function(e, results){
-        res.render('results', {results: results});
+        res.render('results', {results: results, questions: questions.questions});
       });
   });
 
