@@ -156,9 +156,9 @@ module.exports = function routes(app){
       res.send( fail, {'Content-Type':'text/xml'}, 200);
     } else {
       //Save SMS
-      smsUtils.saveMessage(Sms, req.param('date'), req.param('src'), req.param('dst'), req.param('enc'), req.param('msg'));
 
       survey.doSurvey(app, req, res);
+      smsUtils.saveMessage(Sms, req.param('date'), req.param('src'), req.param('dst'), req.param('msg'), 'inbound');
     }
   });
 

@@ -10,15 +10,17 @@ h2 Message log
 table.messages.table.table-striped
   thead
     tr
+      th.direction Direction
       th.msg Message
-      th.date Timestamp
       th.src Sender
+      th.date Timestamp
   tbody
     each sms in results
       tr.message
+        td.direction= sms.direction
         td.msg= sms.msg
-        td.date= sms.date
         td.src= sms.src
+        td.date= sms.timestamp
 .navigation
   - for (var i = 1; i <= pages; i++)
     if(i == page)
