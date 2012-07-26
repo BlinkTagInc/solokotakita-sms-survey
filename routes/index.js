@@ -156,20 +156,19 @@ module.exports = function routes(app){
       res.send( fail, {'Content-Type':'text/xml'}, 200);
     } else {
       //Save SMS
-      smsUtils.saveMessage(Sms, req.param('date'), req.param('src'), req.param('dst'), req.param('msg'), 'inbound');
+      var sms = new Sms({
+          date: req.param('date')
+        , src: req.param('src')
+        , dst: req.param('dst')
+        , msg: req.param('msg')
+        , direction: 'inbound'
+        , timestamp: moment().format()
+      });
+      sms.save();
 
       //Do ping if ping sent
       if(req.param('msg').toLowerCase() == 'ping'){
-        var pingText = "Message recieved " + moment().format();
-        smsUtils.sendMessage(pingText, req.param('src'));
-        var success = '<?xml version="1.0" encoding="UTF-8" ?>\n' +
-          '<inboundAcknowledgment>\n' +
-          '<username>solokota</username>\n' +
-          '<password>S0l0K0t4</password>\n' +
-          '<returnCode>1</returnCode>\n' +
-          '</inboundAcknowledgment>';
-        res.send( success, {'Content-Type':'text/xml'}, 200);
-        smsUtils.saveMessage(Sms, '', '', req.param('src'), pingText, 'outbound');
+        survey.doPing(app, req, res);
       } else {
         survey.doSurvey(app, req, res);
       }

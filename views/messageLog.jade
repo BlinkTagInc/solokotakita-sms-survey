@@ -15,14 +15,17 @@ table.messages.table.table-striped
       th.src Sender
       th.dst Recipient
       th.date Timestamp
+      th.response Response
   tbody
     each sms in results
-      tr.message
-        td.direction= sms.direction
-        td.msg= sms.msg
-        td.src= sms.src
-        td.dst= sms.dst
-        td.date= sms.timestamp
+      - var errorClass = (sms.error) ? 'error message' : 'message'
+        tr(class= errorClass)
+          td.direction= sms.direction
+          td.msg= sms.msg
+          td.src= sms.src
+          td.dst= sms.dst
+          td.date= sms.timestamp
+          td.response= sms.responseCode
 .navigation
   - for (var i = 1; i <= pages; i++)
     if(i == page)

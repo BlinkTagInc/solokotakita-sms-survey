@@ -7,6 +7,8 @@ var Sms = mongoose.model('sms', new mongoose.Schema({
     , msg                :  { type: String }
     , direction          :  { type: String }
     , timestamp          :  { type: String }
+    , responseCode       :  { type: String }
+    , error              :  { type: Boolean, default: false }
   }, {strict: true}));
 
 var Question = new mongoose.Schema({
