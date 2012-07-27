@@ -142,6 +142,7 @@ module.exports = function routes(app){
   });
 
   app.get('/api/incoming', function(req, res){
+    var message = req.param('msg').toLowerCase();
 
   /**
    * Format specified 
@@ -167,8 +168,10 @@ module.exports = function routes(app){
       sms.save();
 
       //Do ping if ping sent
-      if(req.param('msg').toLowerCase() == 'ping'){
+      if (message == 'ping') {
         survey.doPing(app, req, res);
+      } else if (message == 'reset') {
+        survey.resetSurvey(app, req, res);
       } else {
         survey.doSurvey(app, req, res);
       }
