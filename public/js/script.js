@@ -46,7 +46,7 @@ function getNextQuestion(src, msg){
               default:
                 $('<div>')
                   .addClass('question')
-                  .html('Q' + data.status + ': ' + data.question)
+                  .html(data.question)
                   .appendTo('#questions');
                 break;
             }
