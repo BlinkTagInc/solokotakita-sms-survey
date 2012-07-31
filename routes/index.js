@@ -171,6 +171,8 @@ module.exports = function routes(app){
       if (message == 'ping') {
         survey.doPing(app, req, res);
       } else if (message == 'reset') {
+        survey.resetQuestion(app, req, res);
+      } else if (message == 'reset all') {
         survey.resetSurvey(app, req, res);
       } else {
         survey.doSurvey(app, req, res);
