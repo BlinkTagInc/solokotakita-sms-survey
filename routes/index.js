@@ -56,6 +56,26 @@ module.exports = function routes(app){
       });
   });
 
+  app.get('/results/edit/:id', isAuthenticated, function(req, res){
+    Survey
+      .findOne({_id: req.params.id})
+      .run(function(e, result){
+        res.render('editResult', {result: result, questions: questions.questions, referer: req.header('Referer')});
+      });
+  });
+
+  app.post('/api/results/update/:id', isAuthenticated, function(req, res){
+    var answers = [];
+     _.each(req.body, function(answer, i){
+        if(!isNaN(parseFloat(i))){
+          answers.push({number: i, answer: answer});
+        }
+      });
+    Survey.update({_id: req.params.id}, {$set: { answers: answers }}, {upsert: true}, function(e){
+          res.redirect('/results');
+        });
+  });
+
 
   app.get('/tester', isAuthenticated, function(req, res){
     res.render('tester');

@@ -7,13 +7,13 @@ if results && results.length
     thead
       tr
         th.number Number
-        each answer, i in results[0].answers
+        each question, i in questions
           th(title= questions[i])= "Q" + (i + 1)
 
     tbody
       each result in results
         tr.result
           td.number= result.src
-          each answer in result.answers
-            td= answer.answer
+          each question, i in questions
+            td= (result.answers[i]) ? result.answers[i].answer : ''
 
