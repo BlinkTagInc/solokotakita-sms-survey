@@ -79,6 +79,23 @@ $(document).ready(function(){
 
 
   /* Results Page */
+  var kelurahanSelect = $('<select>')
+    .append($('<option>').html('All'));
+  $.getJSON('/api/kelurahans', function(kelurahans){
+    $.each(kelurahans, function(i, kel){
+      $('<option>')
+        .html(kel)
+        .attr((kel.toLowerCase() == kelurahan) ? 'selected' : 'none', '')
+        .appendTo(kelurahanSelect);
+    });
+    $('#kelurahans').append($(kelurahanSelect).html());
+  });
+
+  $('#kelurahans').on('change', function(){
+    console.log($(this).val());
+    window.location = '/results/' + $(this).val().toLowerCase();
+  });
+
   $('#neighborhoodSelect select').on('change', function(){
     $(this).parent().submit();
   });

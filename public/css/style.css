@@ -42,3 +42,14 @@
 h2 {
   text-transform: capitalize;
 }
+
+.resultsControl {
+  width: 500px;
+  float: left;
+}
+
+.export {
+  float: right;
+  width: 200px;
+  text-align: right;
+}

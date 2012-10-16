@@ -6,7 +6,8 @@ var models = require('../models/models')
   , salt = bcrypt.genSaltSync(10)
   , smsUtils = require('../lib/sms')
   , survey = require('../lib/survey')
-  , questions = require('../lib/questions');
+  , questions = require('../lib/questions')
+  , kelurahans = require('../lib/kelurahans');
 
 function isAuthenticated(req, res, next){
   if(req.session.isAuthenticated){
@@ -47,12 +48,12 @@ module.exports = function routes(app){
       });
   };
 
-  app.get('/results', isAuthenticated, function(req, res){
+  app.get('/results/:kelurahan', isAuthenticated, function(req, res){
     Survey
       .find()
       .sort('$natural', -1)
       .run(function(e, results){
-        res.render('results', {results: results, questions: questions.questions});
+        res.render('results', {results: results, questions: questions.questions, kelurahan: req.params.kelurahan});
       });
   });
 
@@ -76,6 +77,10 @@ module.exports = function routes(app){
         });
   });
 
+
+  app.get('/api/kelurahans', isAuthenticated, function(req, res){
+    res.json(kelurahans);
+  });
 
   app.get('/tester', isAuthenticated, function(req, res){
     res.render('tester');

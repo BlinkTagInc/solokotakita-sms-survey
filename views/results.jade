@@ -1,7 +1,11 @@
-h2 Results
+h2= "Reuslts for " + kelurahan
+
+#resultsControl
+  select#kelurahans
 
 if results && results.length
-  a(href='/downloads/results.csv') Export as .csv file
+  .export
+    a(href='/downloads/results.csv') Export as .csv file
 
   table.results.table.table-striped
     thead
@@ -11,11 +15,14 @@ if results && results.length
           th(title= questions[i])= "Q" + (i + 1)
 
     tbody
-      each result in results
+    each result in results
+      if(kelurahan == "all" || (result.answers[0] && result.answers[0].answer.toLowerCase() == kelurahan.toLowerCase() ))
         tr.result
           td.number= result.src
           each question, i in questions
             td= (result.answers[i]) ? result.answers[i].answer : ''
           td.edit
-            a(href="results/edit/" + result._id) edit
+            a(href="/results/edit/" + result._id) edit
 
+script
+  var kelurahan = "#{kelurahan}";
