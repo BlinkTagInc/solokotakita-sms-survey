@@ -25,4 +25,21 @@ if results && results.length
             a(href="/results/edit/" + result._id) edit
 
 script
+  /* Results Page */
   var kelurahan = "#{kelurahan}";
+  var kelurahanSelect = $('<select>')
+    .append($('<option>').html('All'));
+  $.getJSON('/api/kelurahans', function(kelurahans){
+    $.each(kelurahans, function(i, kel){
+      $('<option>')
+        .html(kel)
+        .attr((kelurahan && kel.toLowerCase() == kelurahan) ? 'selected' : 'none', '')
+        .appendTo(kelurahanSelect);
+    });
+    $('#kelurahans').append($(kelurahanSelect).html());
+  });
+
+  $('#kelurahans').on('change', function(){
+    console.log($(this).val());
+    window.location = '/results/' + $(this).val().toLowerCase();
+  });

@@ -67,14 +67,14 @@ module.exports = function routes(app){
 
   app.post('/api/results/update/:id', isAuthenticated, function(req, res){
     var answers = [];
-     _.each(req.body, function(answer, i){
-        if(!isNaN(parseFloat(i))){
-          answers.push({number: i, answer: answer});
-        }
-      });
+    _.each(req.body, function(answer, i){
+      if(!isNaN(parseFloat(i))){
+        answers.push({number: i, answer: answer});
+      }
+    });
     Survey.update({_id: req.params.id}, {$set: { answers: answers }}, {upsert: true}, function(e){
-          res.redirect('/results');
-        });
+      res.redirect(req.body.referer);
+    });
   });
 
 

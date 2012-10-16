@@ -5,6 +5,7 @@ html
     title= typeof(title) !== 'undefined' ? title : 'Solo Kota Kita SMS'
     link(rel='stylesheet', href='/css/style.css')
     link(rel='stylesheet', href='/css/bootstrap.min.css')
+    script(src='/js/jquery-1.7.1.min.js')
   body
     .navbar
       .navbar-inner
@@ -13,7 +14,7 @@ html
           .nav-collapse
             ul#top-menu.nav
               li
-                a(href="/results") Results
+                a(href="/results/all") Results
               li
                 a(href="/messageLog") Message Log
               li
@@ -21,8 +22,7 @@ html
               li
                 a(href="/logout") Logout
     #content!= body
-    
-    script(src='/js/jquery-1.7.1.min.js')
+
     script(src='/js/script.js')
     
     //if lt IE 7
