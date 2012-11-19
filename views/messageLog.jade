@@ -6,11 +6,11 @@ h2 Message log
   - var start = (page - 5 <= 0) ? 1 : (page - 5)
   - var end = ((page + 5) > pages) ? pages : (page + 5)
   - if (start > 1)
-      a(href='/messageLog/1') First&laquo;
+      a(href='/messageLog/1') &laquo; First
   - for (var i = start; i <= end; i++)
       a(href='/messageLog/' + i, class=(i == page) ? 'current' : '')= i
   - if (end < pages)
-      a(href='/messageLog/' + pages) Last&raquo;
+      a(href='/messageLog/' + pages) Last &raquo;
 
 table.messages.table.table-striped
   thead
@@ -33,8 +33,8 @@ table.messages.table.table-striped
           td.response= sms.responseCode
 .navigation
   - if (start > 1)
-      a(href='/messageLog/1') First&laquo;
+      a(href='/messageLog/1') &laquo; First
   - for (var i = start; i <= end; i++)
       a(href='/messageLog/' + i, class=(i == page) ? 'current' : '')= i
   - if (end < pages)
-      a(href='/messageLog/' + pages) Last&raquo;
+      a(href='/messageLog/' + pages) Last &raquo;
