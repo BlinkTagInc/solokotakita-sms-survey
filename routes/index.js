@@ -141,25 +141,30 @@ module.exports = function routes(app){
     }
   });
 
-  app.get('/downloads/results.csv', isAuthenticated, function(req, res){
-    Survey.find(function(e, results){
-      res.writeHead(200, {'Content-Type':'text/csv'});
-      var csv = 'Number';
-      results[0].answers.forEach(function(answer, i){
-        csv += ",Q" + (i+1);
-      });
-      csv += "\n";
-      results.forEach(function(result){
-        var line = [];
-        line.push(result.src)
-        result.answers.forEach(function(answer){
-          line.push(answer.answer);
+  app.get('/downloads/:kelurahan' + '.csv', isAuthenticated, function(req, res){
+    var kelurahan = req.params.kelurahan.toLowerCase();
+    Survey
+      .find()
+      .sort('$natural', -1)
+      .exec(function(e, results){
+        res.writeHead(200, {'Content-Type':'text/csv'});
+        var csv = 'Number';
+        results[0].answers.forEach(function(answer, i){
+          csv += ",Q" + (i+1);
         });
-        csv += line.join(',') + "\n";
+        csv += "\n";
+        results.forEach(function(result){
+          if(kelurahan == "all" || (result.answers[0] && result.answers[0].answer.toLowerCase() == kelurahan )) {
+            var line = result.answers.map(function(answer){
+              return answer.answer;
+            });
+            line.unshift( result.src );
+            csv += line.join(',') + "\n";
+          }        
+        });
+        res.write(csv);
+        res.end();
       });
-      res.write(csv);
-      res.end();
-    });
   });
 
   app.get('/api/questions', isAuthenticated, function(req, res){
