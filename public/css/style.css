@@ -53,3 +53,15 @@ h2 {
   width: 200px;
   text-align: right;
 }
+
+.results td,
+.results th {
+  max-width: 60px;
+}
+
+.results tr td:first-child,
+.results tr th:first-child,
+.results tr td:nth-child(2),
+.results tr th:nth-child(2) {
+  max-width: 100px;
+}
