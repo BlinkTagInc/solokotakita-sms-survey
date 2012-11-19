@@ -1,17 +1,16 @@
 h2 Message log
 .topNavigation Page #{page} of #{pages}
 .navigation
+  - var page = parseInt(page, 10)
+  - var pages = parseInt(pages, 10)
   - var start = (page - 5 <= 0) ? 1 : (page - 5)
   - var end = ((page + 5) > pages) ? pages : (page + 5)
   - if (start > 1)
-    a(href='/messageLog/1') First
+      a(href='/messageLog/1') First&laquo;
   - for (var i = start; i <= end; i++)
-      if(i == page)
-        a(href='/messageLog/' + i, class='current')= i
-      else
-        a(href='/messageLog/' + i)= i
+      a(href='/messageLog/' + i, class=(i == page) ? 'current' : '')= i
   - if (end < pages)
-    a(href='/messageLog/' + pages) Last
+      a(href='/messageLog/' + pages) Last&raquo;
 
 table.messages.table.table-striped
   thead
@@ -33,14 +32,9 @@ table.messages.table.table-striped
           td.date= sms.timestamp
           td.response= sms.responseCode
 .navigation
-  - var start = (page - 5 <= 0) ? 1 : (page - 5)
-  - var end = ((page + 5) > pages) ? pages : (page + 5)
   - if (start > 1)
-    a(href='/messageLog/1') First
+      a(href='/messageLog/1') First&laquo;
   - for (var i = start; i <= end; i++)
-      if(i == page)
-        a(href='/messageLog/' + i, class='current')= i
-      else
-        a(href='/messageLog/' + i)= i
+      a(href='/messageLog/' + i, class=(i == page) ? 'current' : '')= i
   - if (end < pages)
-    a(href='/messageLog/' + pages) Last
+      a(href='/messageLog/' + pages) Last&raquo;
