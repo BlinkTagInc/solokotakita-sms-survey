@@ -3,69 +3,74 @@ var models = require('../models/models')
   , _ = require('underscore')
   , moment = require('moment')
   , bcrypt = require('bcrypt')
+  , nconf = require('nconf')
   , salt = bcrypt.genSaltSync(10)
   , smsUtils = require('../lib/sms')
   , survey = require('../lib/survey')
   , questions = require('../lib/questions')
   , kelurahans = require('../lib/kelurahans');
 
-function isAuthenticated(req, res, next){
-  if(req.session.isAuthenticated){
+function isAuthenticated(req, res, next) {
+  if(req.session.isAuthenticated) {
     next();
-  }else{
+  } else {
     res.redirect('/login');
   }
 }
 
 module.exports = function routes(app){
 
-  var Sms = app.set('db').model('sms')
-    , User = app.set('db').model('user')
-    , Survey = app.set('db').model('survey');
-
+  var Sms = app.set('db').model('sms');
+  var User = app.set('db').model('user');
+  var Survey = app.set('db').model('survey');
 
   /* Routes */
 
-  app.get('/', isAuthenticated, function(req, res){
-    res.render('index')
+  app.get('/', isAuthenticated, function(req, res) {
+    res.render('index');
   });
+
 
   app.get('/messageLog', isAuthenticated, getMessageLog);
   app.get('/messageLog/:page', isAuthenticated, getMessageLog);
 
-  function getMessageLog(req, res){
-    var resultsPerPage = 100
-      , page = (parseInt(req.params.page, 10)) ? req.params.page : 1;
+  function getMessageLog(req, res, next) {
+    var resultsPerPage = 100;
+    var page = (parseInt(req.params.page, 10)) ? req.params.page : 1;
     Sms
       .find()
-      .sort('$natural', -1)
+      .sort({$natural: -1})
       .limit(resultsPerPage)
       .skip((page - 1) * resultsPerPage)
-      .run(function(e, results){
+      .exec(function(e, results){
+        if(e) return next(e);
         Sms.count(function(e, count){
+          if(e) return next(e);
           res.render('messageLog', {results: results, page: page, pages: Math.ceil(count / resultsPerPage), resultsPerPage: resultsPerPage});
         });
       });
-  };
+  }
 
-  app.get('/results/:kelurahan', isAuthenticated, function(req, res){
+  app.get('/results/:kelurahan', isAuthenticated, function(req, res, next) {
     Survey
       .find()
-      .sort('$natural', -1)
-      .run(function(e, results){
+      .sort({$natural: -1})
+      .exec(function(e, results){
+        if(e) return next(e);
         res.render('results', {results: results, questions: questions.questions, kelurahan: req.params.kelurahan});
       });
   });
 
-  app.get('/results/edit/:id', isAuthenticated, function(req, res){
+  app.get('/results/edit/:id', isAuthenticated, function(req, res, next) {
     Survey
       .findOne({_id: req.params.id})
-      .run(function(e, result){
+      .exec(function(e, result){
+        if(e) return next(e);
         res.render('editResult', {result: result, questions: questions.questions, referer: req.header('Referer')});
       });
   });
 
-  app.post('/api/results/update/:id', isAuthenticated, function(req, res){
+  app.post('/api/results/update/:id', isAuthenticated, function(req, res, next) {
     var answers = [];
     _.each(req.body, function(answer, i){
       if(!isNaN(parseFloat(i))){
@@ -73,30 +78,46 @@ module.exports = function routes(app){
       }
     });
     Survey.update({_id: req.params.id}, {$set: { answers: answers }}, {upsert: true}, function(e){
+      if(e) return next(e);
       res.redirect(req.body.referer);
     });
   });
 
 
-  app.get('/api/kelurahans', isAuthenticated, function(req, res){
+  app.get('/api/kelurahans', isAuthenticated, function(req, res, next) {
     res.json(kelurahans);
   });
 
-  app.get('/tester', isAuthenticated, function(req, res){
+
+  app.get('/tester', isAuthenticated, function(req, res, next) {
     res.render('tester');
   });
 
 
-  app.get('/login', function(req, res){
+  app.post('/api/sms-test', isAuthenticated, function(req, res, next) {
+    if(req.body.dst) {
+      smsUtils.sendMessage('This is a Test', req.body.dst, function(e, response){
+        if(e) return next(e);
+
+        console.log(response);
+
+        res.send(response);
+      });
+    }
+  });
+
+
+  app.get('/login', function(req, res, next) {
     res.render('login', { title: 'Solo Kota Kita | Login' });
   });
 
-  app.post('/sessions/create', function(req, res){
+  app.post('/sessions/create', function(req, res, next) {
     User.findOne({username: req.body.username}, function(e, result){
+      if(e) return next(e);
       if(result && bcrypt.compareSync(req.body.password, result.password)){
         req.session.user = {
           username: result.username
-        }
+        };
         req.session.isAuthenticated = true;
         res.redirect('/');
       } else {
@@ -105,23 +126,24 @@ module.exports = function routes(app){
     });
   });
 
-  app.get('/logout', function(req, res){
+  app.get('/logout', function(req, res, next) {
     req.session.destroy(function(e){
+      if(e) return next(e);
       res.redirect('/login');
     });
   });
 
-  app.get('/signup', function(req, res){
+  app.get('/signup', function(req, res, next) {
     res.render('signup', { title: 'Solo Kota Kita | Create New User' });
   });
 
-  app.post('/users/create', function(req, res){
-    if(process.env.ALLOW_SIGNUP == 'true' || req.session.isAuthenticated) {
+  app.post('/users/create', function(req, res, next) {
+    if(nconf.get('ALLOW_SIGNUP') === 'true' || req.session.isAuthenticated) {
       if(req.body.username && req.body.password){
         if(req.body.password == req.body.passwordAgain){
           var user = new User({
-              username: req.body.username
-            , password: bcrypt.hashSync( req.body.password, salt )
+            username: req.body.username,
+            password: bcrypt.hashSync( req.body.password, salt )
           });
           user.save(function(e){
             if(e){
@@ -141,12 +163,13 @@ module.exports = function routes(app){
     }
   });
 
-  app.get('/downloads/:kelurahan' + '.csv', isAuthenticated, function(req, res){
+  app.get('/downloads/:kelurahan' + '.csv', isAuthenticated, function(req, res, next) {
     var kelurahan = req.params.kelurahan.toLowerCase();
     Survey
       .find()
-      .sort('$natural', -1)
+      .sort({$natural: -1})
       .exec(function(e, results){
+        if(e) return next(e);
         res.writeHead(200, {'Content-Type':'text/csv'});
         var csv = 'Number';
         results[0].answers.forEach(function(answer, i){
@@ -160,24 +183,29 @@ module.exports = function routes(app){
             });
             line.unshift( result.src );
             csv += line.join(',') + "\n";
-          }        
+          }
         });
         res.write(csv);
         res.end();
       });
   });
 
-  app.get('/api/questions', isAuthenticated, function(req, res){
+
+  app.get('/api/questions', isAuthenticated, function(req, res, next) {
     res.json(questions);
   });
 
-  app.get('/api/incoming', function(req, res){
+
+  app.get('/api/incoming', function(req, res, next) {
     var message = req.param('msg').toLowerCase();
 
-  /**
-   * Format specified 
-   * http://<Client domain name and script>?date=<DATETIME>&src=<SENDER_NUMBER>&dst=<DESTINATION_NUMBER>&enc=<ENCODING>&msg=<TEXT_MESSAGE>
-   */
+    console.log('Incoming SMS');
+    console.log(message);
+
+    /**
+     * Format specified
+     * http://<Client domain name and script>?date=<DATETIME>&src=<SENDER_NUMBER>&dst=<DESTINATION_NUMBER>&enc=<ENCODING>&msg=<TEXT_MESSAGE>
+     */
 
     if(!req.param('msg') || !req.param('src')){
       var fail = '<?xml version="1.0" encoding="UTF-8" ?>\n' +
@@ -188,12 +216,12 @@ module.exports = function routes(app){
     } else {
       //Save SMS
       var sms = new Sms({
-          date: req.param('date')
-        , src: req.param('src')
-        , dst: req.param('dst')
-        , msg: req.param('msg')
-        , direction: 'inbound'
-        , timestamp: moment().format()
+        date: req.param('date'),
+        src: req.param('src'),
+        dst: req.param('dst'),
+        msg: req.param('msg'),
+        direction: 'inbound',
+        timestamp: moment().format()
       });
       sms.save();
 
@@ -210,16 +238,10 @@ module.exports = function routes(app){
     }
   });
 
-  app.get('/api/results', isAuthenticated, function(req, res){
+
+  app.get('/api/results', isAuthenticated, function(req, res, next) {
     Survey.find(function(e, results){
       res.json(results);
     });
   });
-
-  //Nothing specified
-  app.all('*', function notFound(req, res) {
-    res.send('Not Found');
-  });
-
-}
-
+};

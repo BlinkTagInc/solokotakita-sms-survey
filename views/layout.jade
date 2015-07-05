@@ -1,31 +1,31 @@
-!!! 5
-html
+doctype html
+html(lang="en")
   head
-    link(rel='shortcut icon', href:'/favicon.ico')
     title= typeof(title) !== 'undefined' ? title : 'Solo Kota Kita SMS'
     link(rel='stylesheet', href='/css/style.css')
-    link(rel='stylesheet', href='/css/bootstrap.min.css')
-    script(src='/js/jquery-1.7.1.min.js')
   body
-    .navbar
-      .navbar-inner
-        .container
-          a.brand(href="/") Solo Kota Kita SMS
-          .nav-collapse
-            ul#top-menu.nav
-              li
-                a(href="/results/all") Results
-              li
-                a(href="/messageLog") Message Log
-              li
-                a(href="/tester") Test Survey
-              li
-                a(href="/logout") Logout
-    #content!= body
+    nav.navbar.navbar-default
+      .container-fluid
+        .navbar-header
+          button.navbar-toggle.collapsed(type="button" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar")
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href="#") Solo Kota Kita SMS
+        #navbar.navbar-collapse.collapse
+          ul.nav.navbar-nav
+            li
+              a(href="/results/all") Results
+            li
+              a(href="/messageLog") Message Log
+            li
+              a(href="/tester") Test Survey
+          ul.nav.navbar-nav.navbar-right
+            li
+              a(href="/logout") Logout
+  
+    .container
+      block content
 
-    script(src='/js/script.js')
-    
-    //if lt IE 7
-      script(defer, src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js")
-      script.
-        window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})
+    script(src="/dest/index.js")

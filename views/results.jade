@@ -1,45 +1,31 @@
-h2= "Reuslts for " + kelurahan
+extends layout
 
-#resultsControl
-  select#kelurahans
+block content
 
-if results && results.length
-  .export
-    a(href='/downloads/'+kelurahan+'.csv') Export as .csv file
+  h2= "Reuslts for " + kelurahan
 
-  table.results.table.table-striped
-    thead
-      tr
-        th.number Number
-        each question, i in questions
-          th(title= questions[i])= "Q" + (i + 1)
+  #kelurahans
 
-    tbody
-    each result in results
-      if(kelurahan == "all" || (result.answers[0] && result.answers[0].answer.toLowerCase() == kelurahan.toLowerCase() ))
-        tr.result
-          td.number= result.src
+  if results && results.length
+    .export
+      a(href='/downloads/'+kelurahan+'.csv') Export as .csv file
+
+    table.results.table.table-striped
+      thead
+        tr
+          th.number Number
           each question, i in questions
-            td= (result.answers[i]) ? result.answers[i].answer : ''
-          td.edit
-            a(href="/results/edit/" + result._id) edit
+            th(title= questions[i])= "Q" + (i + 1)
 
-script
-  /* Results Page */
-  var kelurahan = "#{kelurahan}";
-  var kelurahanSelect = $('<select>')
-    .append($('<option>').html('All'));
-  $.getJSON('/api/kelurahans', function(kelurahans){
-    $.each(kelurahans, function(i, kel){
-      $('<option>')
-        .html(kel)
-        .attr((kelurahan && kel.toLowerCase() == kelurahan) ? 'selected' : 'none', '')
-        .appendTo(kelurahanSelect);
-    });
-    $('#kelurahans').append($(kelurahanSelect).html());
-  });
+      tbody
+      each result in results
+        if(kelurahan == "all" || (result.answers[0] && result.answers[0].answer.toLowerCase() == kelurahan.toLowerCase() ))
+          tr.result
+            td.number= result.src
+            each question, i in questions
+              td= (result.answers[i]) ? result.answers[i].answer : ''
+            td.edit
+              a(href="/results/edit/" + result._id) edit
 
-  $('#kelurahans').on('change', function(){
-    console.log($(this).val());
-    window.location = '/results/' + $(this).val().toLowerCase();
-  });
+  script.
+    var kelurahan = "#{kelurahan}";
