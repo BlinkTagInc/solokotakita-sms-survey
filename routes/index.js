@@ -197,7 +197,7 @@ module.exports = function routes(app){
 
 
   app.get('/api/incoming', function(req, res, next) {
-    var message = req.param('msg').toLowerCase();
+    var message = req.query.msg.toLowerCase();
 
     console.log('Incoming SMS');
     console.log(message);
@@ -207,19 +207,19 @@ module.exports = function routes(app){
      * http://<Client domain name and script>?date=<DATETIME>&src=<SENDER_NUMBER>&dst=<DESTINATION_NUMBER>&enc=<ENCODING>&msg=<TEXT_MESSAGE>
      */
 
-    if(!req.param('msg') || !req.param('src')){
+    if(!req.query.msg || !req.query.src){
       var fail = '<?xml version="1.0" encoding="UTF-8" ?>\n' +
-        '<inboundAcknowledgment>\n' +
+        '<deliveryAcknowledgment>\n' +
         '<error>No source or message provided</error>\n' +
-        '</inboundAcknowledgment>';
-      res.send( fail, {'Content-Type':'text/xml'}, 200);
+        '</deliveryAcknowledgment>';
+      res.send(fail, {'Content-Type':'text/xml'}, 200);
     } else {
       //Save SMS
       var sms = new Sms({
-        date: req.param('date'),
-        src: req.param('src'),
-        dst: req.param('dst'),
-        msg: req.param('msg'),
+        date: req.query.date,
+        src: req.query.src,
+        dst: req.query.dst,
+        msg: req.query.msg,
         direction: 'inbound',
         timestamp: moment().format()
       });

@@ -123,7 +123,7 @@ gulp.task('develop', function() {
   gulp.watch([
     'app.js',
     'routes/**/*.js',
-    'libs/**/*.js'
+    'lib/**/*.js'
   ], function() {
     server.start.bind(server);
   });
