@@ -51,7 +51,6 @@ if(app.get('env') !== 'development') {
       };
 }
 
-
 app.use(session({
   store: store,
   secret: nconf.get('SESSION_SECRET'),
@@ -60,9 +59,15 @@ app.use(session({
   cookie: cookie
 }));
 
-
+//force HTTPS
 if(app.get('env') !== 'development') {
-  app.all('*', routes.force_https);
+  app.all('*', function(req, res, next) {
+    if(req.headers['x-forwarded-proto'] != 'https') {
+      res.redirect('https://' + req.headers.host + req.path);
+    } else {
+      next();
+    }
+  });
 }
 
 require('./routes')(app);
