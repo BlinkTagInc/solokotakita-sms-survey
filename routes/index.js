@@ -101,7 +101,7 @@ module.exports = function routes(app){
 
         console.log(response);
 
-        res.send(response);
+        res.json(response);
       });
     }
   });

@@ -70,7 +70,11 @@ $('#testSMS').submit(function() {
   $.post('/api/sms-test', {dst: $('[name="dst"]', this).val()}, function(data) {
     console.log(data);
 
-    $('#smsResults').text(data);
+    if(data && data.status === 'success') {
+      $('#smsResults').removeClass().addClass('alert alert-success').text('Success: ' + data.body);
+    } else {
+      $('#smsResults').removeClass().addClass('alert alert-danger').text('Error: ' + data.body);
+    }
   });
   return false;
 });
