@@ -197,12 +197,11 @@ module.exports = function routes(app){
 
 
   app.get('/api/incoming', function(req, res, next) {
-    var message = req.query.msg.toLowerCase();
+    var message = req.query.msg ? req.query.msg.toLowerCase() : '';
 
-    console.log('Incoming SMS');
-    console.log(message);
+    console.log('Incoming SMS', message);
 
-    /**
+    /*
      * Format specified
      * http://<Client domain name and script>?date=<DATETIME>&src=<SENDER_NUMBER>&dst=<DESTINATION_NUMBER>&enc=<ENCODING>&msg=<TEXT_MESSAGE>
      */
