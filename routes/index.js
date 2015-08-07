@@ -96,7 +96,7 @@ module.exports = function routes(app){
 
   app.post('/api/sms-test', isAuthenticated, function(req, res, next) {
     if(req.body.dst) {
-      smsUtils.sendMessage('This is a Test', req.body.dst, function(e, response){
+      smsUtils.sendMessage('This is a Test', nconf.get('SMS_SENDER_ID'), req.body.dst, function(e, response){
         if(e) return next(e);
 
         console.log(response);
