@@ -6,12 +6,13 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var nconf = require('nconf');
-var db = require('mongoose').connect(process.env.MONGOLAB_URI || 'mongodb://localhost/sms');
 
 nconf
   .argv()
   .env()
   .file({file:'./config.json'});
+
+var db = require('mongoose').connect(nconf.get('MONGOLAB_URI') || 'mongodb://localhost/sms');
 
 var app = express();
 
@@ -24,7 +25,7 @@ app.set('db', db);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
-app.use(logger('dev'));
+app.use(logger('combined'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(cookieParser(nconf.get('SESSION_SECRET')));

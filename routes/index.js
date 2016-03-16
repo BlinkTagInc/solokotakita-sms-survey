@@ -112,9 +112,9 @@ module.exports = function routes(app){
   });
 
   app.post('/sessions/create', function(req, res, next) {
-    User.findOne({username: req.body.username}, function(e, result){
+    User.findOne({username: req.body.username}, function(e, result) {
       if(e) return next(e);
-      if(result && bcrypt.compareSync(req.body.password, result.password)){
+      if(result && bcrypt.compareSync(req.body.password, result.password)) {
         req.session.user = {
           username: result.username
         };
