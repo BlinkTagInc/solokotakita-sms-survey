@@ -14,7 +14,7 @@ function getTimestamp(){
 function getNextQuestion(src, msg){
   $.getJSON('/api/incoming', {
     src: src,
-    dst: '6289676076213',
+    dst: '6285777282036',
     enc: '0',
     test: 'true',
     msg: msg
